@@ -5,6 +5,7 @@
   "ignore": [
     "source",
     ".gitignore",
+    ".idea",
     "bower.json",
     "gulpfile.js",
     "package.json",
