@@ -1,0 +1,13 @@
+{
+  "name": "element.mass",
+  "version": "1.0",
+  "main": "",
+  "ignore": [
+    "source",
+    ".gitignore",
+    "bower.json",
+    "gulpfile.js",
+    "package.json",
+    "README.md"
+  ]
+}
