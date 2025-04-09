@@ -6,8 +6,9 @@ class CWDA_ReplaceText extends CWDA_Plugin {
 	//
 	static function GetDescription() {
 		$Descr = 'Плагин выполняет замены в значениях полей и свойств. Плагин поддерживает замену по регулярным выражениям.';
-		if (!CWDA::IsUtf()) {
-			$Descr = CWDA::ConvertCharset($Descr);
+        $cwda = new CWDA;
+		if (!$cwda->IsUtf()) {
+			$Descr = $cwda->ConvertCharset($Descr);
 		}
 		return $Descr;
 	}
@@ -24,8 +25,9 @@ class CWDA_ReplaceText extends CWDA_Plugin {
 				'CASE_SENSITIVE_HINT' => 'В случае учета регистра, символы в верхнем регистре не равны символам в нижне регистре. Например, Если в тексте содержится "АБВ", а поиск идет для "абв", то замены не будет.<br/><br/><b>Внимание!</b> На некоторых серверах (там где не работает нормально php-функция <code><a href="http://forum.ru-board.com/topic.cgi?forum=31&topic=13373" target="_blank">str_ireplace</a></code>) данная функция не работает.',
 		);
 		$MESS = trim($MESS[$Code]);
-		if ($ConvertCharset && !CWDA::IsUtf()) {
-			$MESS = CWDA::ConvertCharset($MESS);
+        $cwda = new CWDA;
+		if ($ConvertCharset && !$cwda->IsUtf()) {
+			$MESS = $cwda->ConvertCharset($MESS);
 		}
 		return $MESS;
 	}
@@ -68,11 +70,12 @@ class CWDA_ReplaceText extends CWDA_Plugin {
 		<?
 	}
 	static function ShowSettings($IBlockID=false) {
+        $cwda = new CWDA;
 		?>
 		<div id="wda_settings_<?=self::CODE?>">
 			<div class="wda_settings_header"><?=self::GetMessage('FIELD_TARGET');?></div>
 			<div>
-				<div><select name="params[field_target]" id="wda_field_target" class="wda_select_field"></select><?=CWDA::ShowHint(self::GetMessage('SELECT_PRICE_TARGET'));?></div>
+				<div><select name="params[field_target]" id="wda_field_target" class="wda_select_field"></select><?=$cwda->ShowHint(self::GetMessage('SELECT_PRICE_TARGET'));?></div>
 			</div>
 			<div class="wda_additional_settings" id="wda_additional_settings_<?=self::CODE?>"></div>
 			<br/>
@@ -87,11 +90,11 @@ class CWDA_ReplaceText extends CWDA_Plugin {
 				<br/>
 			</div>
 			<div id="wda_checkbox_use_regexp">
-				<div><label><input type="hidden" name="params[use_regexp]" value="N" /><input type="checkbox" name="params[use_regexp]" value="Y" /> <?=self::GetMessage('USE_REGEXP');?></label> <?=CWDA::ShowHint(self::GetMessage('USE_REGEXP_HINT'));?></div>
+				<div><label><input type="hidden" name="params[use_regexp]" value="N" /><input type="checkbox" name="params[use_regexp]" value="Y" /> <?=self::GetMessage('USE_REGEXP');?></label> <?=$cwda->ShowHint(self::GetMessage('USE_REGEXP_HINT'));?></div>
 				<br/>
 			</div>
 			<div id="wda_case_sensitive">
-				<div><label><input type="hidden" name="params[case_sensitive]" value="N" /><input type="checkbox" name="params[case_sensitive]" value="Y" /> <?=self::GetMessage('CASE_SENSITIVE');?></label> <?=CWDA::ShowHint(self::GetMessage('CASE_SENSITIVE_HINT'));?></div>
+				<div><label><input type="hidden" name="params[case_sensitive]" value="N" /><input type="checkbox" name="params[case_sensitive]" value="Y" /> <?=self::GetMessage('CASE_SENSITIVE');?></label> <?=$cwda->ShowHint(self::GetMessage('CASE_SENSITIVE_HINT'));?></div>
 				<br/>
 			</div>
 		</div>
@@ -125,12 +128,13 @@ class CWDA_ReplaceText extends CWDA_Plugin {
 	static function Process($ElementID, $arElement, $Params) {
 		$bResult = false;
 		$IBlockElement = new CIBlockElement;
+        $cwda = new CWDA;
 		$Target = $Params['field_target'];
 		$From = $Params['search_from'];
 		$To = $Params['search_to'];
-		if(!CWDA::IsUtf()) {
-			$From = CWDA::ConvertCharset($From);
-			$To = CWDA::ConvertCharset($To);
+		if(!$cwda->IsUtf()) {
+			$From = $cwda->ConvertCharset($From);
+			$To = $cwda->ConvertCharset($To);
 		}
 		$arSpec1 = array('\r','\n','\t');
 		$arSpec2 = array("\r","\n","\t");

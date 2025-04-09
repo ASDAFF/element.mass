@@ -8,8 +8,9 @@ class CWDA_Logger extends CWDA_Plugin {
 	//
 	static function GetDescription() {
 		$Descr = 'Плагин сохраняет данные найденных элементов в файл.';
-		if (!CWDA::IsUtf()) {
-			$Descr = CWDA::ConvertCharset($Descr);
+        $cwda = new CWDA;
+		if (!$cwda->IsUtf()) {
+			$Descr = $cwda->ConvertCharset($Descr);
 		}
 		return $Descr;
 	}
@@ -38,8 +39,9 @@ class CWDA_Logger extends CWDA_Plugin {
 			'CATALOG_FIELD_CATALOG_PURCHASING_PRICE' => 'Закупочная цена',
 		);
 		$MESS = trim($MESS[$Code]);
-		if ($ConvertCharset && !CWDA::IsUtf()) {
-			$MESS = CWDA::ConvertCharset($MESS);
+        $cwda = new CWDA;
+		if ($ConvertCharset && !$cwda->IsUtf()) {
+			$MESS = $cwda->ConvertCharset($MESS);
 		}
 		return $MESS;
 	}
@@ -212,6 +214,7 @@ class CWDA_Logger extends CWDA_Plugin {
 		return $Value;
 	}
 	static function Process($ElementID, $arElement, $Params) {
+        $cwda = new CWDA;
 		$FileName = $Params['file_name'];
 		if(empty($FileName)){
 			$FileName = self::FILE_NAME;
@@ -239,7 +242,7 @@ class CWDA_Logger extends CWDA_Plugin {
 						$Line = $Code;
 						if(in_array($Code,array('ID','NAME','CODE','ACTIVE','XML_ID','SORT','PREVIEW_TEXT','PREVIEW_TEXT_TYPE','PREVIEW_PICTURE','DETAIL_TEXT','DETAIL_TEXT_TYPE','DETAIL_PICTURE','DATE_ACTIVE_FROM','DATE_ACTIVE_TO','SHOW_COUNTER','TAGS','DATE_CREATE','CREATED_BY','TIMESTAMP_X','MODIFIED_BY'))) {
 							$Line = GetMessage('IBLOCK_FIELD_'.$Code);
-						} elseif($PropID = CWDA::IsProperty($Code)){
+						} elseif($PropID = $cwda->IsProperty($Code)){
 							$bPropFound = false;
 							foreach($arElement['PROPERTIES'] as $arProperty){
 								if($arProperty['ID']==$PropID) {
@@ -248,12 +251,12 @@ class CWDA_Logger extends CWDA_Plugin {
 									break;
 								}
 							}
-						} elseif ($PriceID = CWDA::IsPrice($Code)){
+						} elseif ($PriceID = $cwda->IsPrice($Code)){
 							if (CModule::IncludeModule('catalog')) {
 								$arPrice = CCatalogGroup::GetByID($PriceID);
 								$Line = $arPrice['NAME_LANG'];
 							}
-						} elseif (CWDA::IsCatalogField($Code)){
+						} elseif ($cwda->IsCatalogField($Code)){
 							$arCatalogFieldsNames = array(
 								'CATALOG_QUANTITY' => self::GetMessage('CATALOG_FIELD_QUANTITY',true),
 								'CATALOG_QUANTITY_RESERVED' => self::GetMessage('CATALOG_FIELD_QUANTITY_RESERVED',true),
@@ -272,10 +275,10 @@ class CWDA_Logger extends CWDA_Plugin {
 					}
 					$Line = implode(self::CSV_SEPARATOR,$arLine);
 					unset($arLine);
-					if ($Params['encoding']=='CP1251' && CWDA::IsUtf()) {
-						$Line = CWDA::ConvertCharset($Line,'UTF-8','CP1251');
-					} elseif ($Params['encoding']=='UTF-8' && !CWDA::IsUtf()){
-						$Line = CWDA::ConvertCharset($Line,'CP1251','UTF-8');
+					if ($Params['encoding']=='CP1251' && $cwda->IsUtf()) {
+						$Line = $cwda->ConvertCharset($Line,'UTF-8','CP1251');
+					} elseif ($Params['encoding']=='UTF-8' && !$cwda->IsUtf()){
+						$Line = $cwda->ConvertCharset($Line,'CP1251','UTF-8');
 					}
 					self::WriteToFile($FileName,$Line);
 				}
@@ -288,7 +291,7 @@ class CWDA_Logger extends CWDA_Plugin {
 						$Line = is_numeric($arElement[$Code]) && $arElement[$Code]>0 ? CFile::GetPath($arElement[$Code]) : '';
 					} elseif (in_array($Code,array('ACTIVE'))) {
 						$Line = $arElement[$Code]=='Y'?GetMessage('MAIN_YES'):GetMessage('MAIN_NO');
-					} elseif($PropID = CWDA::IsProperty($Code)){
+					} elseif($PropID = $cwda->IsProperty($Code)){
 						foreach($arElement['PROPERTIES'] as $arProperty){
 							if($arProperty['ID']==$PropID) {
 								$Value = $arProperty['VALUE'];
@@ -307,9 +310,9 @@ class CWDA_Logger extends CWDA_Plugin {
 								break;
 							}
 						}
-					} elseif ($PriceID = CWDA::IsPrice($Code)){
+					} elseif ($PriceID = $cwda->IsPrice($Code)){
 						$Line = $arElement['CATALOG_PRICE_'.$PriceID];
-					} elseif (CWDA::IsCatalogField($Code)){
+					} elseif ($cwda->IsCatalogField($Code)){
 						$Line = $arElement[$Code];
 					}
 					$Line = self::EscapeCsv($Line);
@@ -318,10 +321,10 @@ class CWDA_Logger extends CWDA_Plugin {
 				}
 				$Line = implode(self::CSV_SEPARATOR,$arLine);
 				unset($arLine);
-				if ($Params['encoding']=='CP1251' && CWDA::IsUtf()) {
-					$Line = CWDA::ConvertCharset($Line,'UTF-8','CP1251');
-				} elseif ($Params['encoding']=='UTF-8' && !CWDA::IsUtf()){
-					$Line = CWDA::ConvertCharset($Line,'CP1251','UTF-8');
+				if ($Params['encoding']=='CP1251' && $cwda->IsUtf()) {
+					$Line = $cwda->ConvertCharset($Line,'UTF-8','CP1251');
+				} elseif ($Params['encoding']=='UTF-8' && !$cwda->IsUtf()){
+					$Line = $cwda->ConvertCharset($Line,'CP1251','UTF-8');
 				}
 				self::WriteToFile($FileName,$Line);
 				break;

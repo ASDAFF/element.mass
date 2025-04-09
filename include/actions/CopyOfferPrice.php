@@ -5,20 +5,22 @@ class CWDA_CopyOfferPrice extends CWDA_Plugin {
 	CONST NAME = 'ТП: установка цены из родительского товара';
 	//
 	static function GetDescription() {
+        $cwda = new CWDA;
 		$Descr = 'Плагин устанавливает цену торгового предложения копированием из родительского товара.';
-		if (!CWDA::IsUtf()) {
-			$Descr = CWDA::ConvertCharset($Descr);
+		if (!$cwda->IsUtf()) {
+			$Descr = $cwda->ConvertCharset($Descr);
 		}
 		return $Descr;
 	}
 	static function GetMessage($Code, $ConvertCharset=false) {
+        $cwda = new CWDA;
 		$MESS = array(
 			'ALERT_NO_FIELD_PRICE' => 'Укажите тип цены для копирования',
 			'PRICE_TARGET' => 'Тип цен',
 		);
 		$MESS = trim($MESS[$Code]);
-		if ($ConvertCharset && !CWDA::IsUtf()) {
-			$MESS = CWDA::ConvertCharset($MESS);
+		if ($ConvertCharset && !$cwda->IsUtf()) {
+			$MESS = $cwda->ConvertCharset($MESS);
 		}
 		return $MESS;
 	}
@@ -64,6 +66,7 @@ class CWDA_CopyOfferPrice extends CWDA_Plugin {
 	static function Process($ElementID, $arElement, $Params) {
 		$bResult = false;
 		$IBlockElement = new CIBlockElement;
+        $cwda = new CWDA;
 		$PriceTarget = preg_replace('#^CATALOG_PRICE_(\d+)$#i','$1',$Params['price_target']);
 		$OffersIBlockID = $arElement['IBLOCK_ID'];
 		if($OffersIBlockID>0 && $PriceTarget>0) {
@@ -75,7 +78,7 @@ class CWDA_CopyOfferPrice extends CWDA_Plugin {
 						if($ProductID>0){
 							$resProduct = CIBlockElement::GetList(array(),array('ID'=>$ProductID,'IBLOCK_ID'=>$arCatalog['PRODUCT_IBLOCK_ID']),false,false,array('ID','CATALOG_GROUP_'.$PriceTarget));
 							if($arProduct = $resProduct->GetNext(false,false)){
-								CWDA::SetProductPrice($ElementID, $PriceTarget, $arProduct['CATALOG_PRICE_'.$PriceTarget], $arProduct['CATALOG_CURRENCY_'.$PriceTarget]);
+                                $cwda->SetProductPrice($ElementID, $PriceTarget, $arProduct['CATALOG_PRICE_'.$PriceTarget], $arProduct['CATALOG_CURRENCY_'.$PriceTarget]);
 							}
 						}
 						break;

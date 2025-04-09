@@ -6,8 +6,9 @@ class CWDA_ImageCopy extends CWDA_Plugin {
 	//
 	static function GetDescription() {
 		$Descr = 'Плагин для копирования изображений в инфоблоках из одного поля/свойства в другое. Поддерживаются поля «Картинка для анонса» и «Детальная картинка», а также свойства инфоблока типа «Файл». Возможны любые сочетания.';
-		if (!CWDA::IsUtf()) {
-			$Descr = CWDA::ConvertCharset($Descr);
+        $cwda = new CWDA;
+		if (!$cwda->IsUtf()) {
+			$Descr = $cwda->ConvertCharset($Descr);
 		}
 		return $Descr;
 	}
@@ -23,9 +24,10 @@ class CWDA_ImageCopy extends CWDA_Plugin {
 			'SELECT_SOURCE' => 'Выберите поле/свойство с изображением.',
 			'SELECT_TARGET' => 'Выберите поле/свойство, куда будет сохраняться изображение.',
 		);
+        $cwda = new CWDA;
 		$MESS = trim($MESS[$Code]);
-		if ($ConvertCharset && !CWDA::IsUtf()) {
-			$MESS = CWDA::ConvertCharset($MESS);
+		if ($ConvertCharset && !$cwda->IsUtf()) {
+			$MESS = $cwda->ConvertCharset($MESS);
 		}
 		return $MESS;
 	}
@@ -76,21 +78,23 @@ class CWDA_ImageCopy extends CWDA_Plugin {
 		<?
 	}
 	static function ShowSettings($IBlockID=false) {
+        $cwda = new CWDA;
 		?>
 		<div id="wda_settings_<?=self::CODE?>">
 			<div class="wda_settings_header"><?=self::GetMessage('PROP_GROUP_1');?></div>
 			<div>
-				<div><select name="params[field_source]" id="wda_field_source" class="wda_select_field"></select><?=CWDA::ShowHint(self::GetMessage('SELECT_SOURCE'));?></div>
+				<div><select name="params[field_source]" id="wda_field_source" class="wda_select_field"></select><?=$cwda->ShowHint(self::GetMessage('SELECT_SOURCE'));?></div>
 			</div>
 			<br/>
 			<div class="wda_settings_header"><?=self::GetMessage('PROP_GROUP_2');?></div>
 			<div>
-				<div><select name="params[field_target]" id="wda_field_target" class="wda_select_field"></select><?=CWDA::ShowHint(self::GetMessage('SELECT_TARGET'));?></div>
+				<div><select name="params[field_target]" id="wda_field_target" class="wda_select_field"></select><?=$cwda->ShowHint(self::GetMessage('SELECT_TARGET'));?></div>
 			</div>
 		</div>
 		<?
 	}
 	static function Process($ElementID, $arElement, $Params) {
+        $cwda = new CWDA;
 		$bResult = false;
 		// Source
 		$SourceField = false;
@@ -116,7 +120,7 @@ class CWDA_ImageCopy extends CWDA_Plugin {
 			if (strlen($SourceField)) {
 				$Value = $arElement[$SourceField];
 			} elseif ($SourcePropertyID>0) {
-				$arProp = CWDA::GetPropertyFromArrayById($arElement['PROPERTIES'],$SourcePropertyID);
+				$arProp = $cwda->GetPropertyFromArrayById($arElement['PROPERTIES'],$SourcePropertyID);
 				$Value = $arProp['VALUE'];
 			}
 			if (!empty($Value)) {
@@ -128,14 +132,14 @@ class CWDA_ImageCopy extends CWDA_Plugin {
 						$Value = CFile::MakeFileArray($Value);
 						$IBlockElement = new CIBlockElement;
 						if ($IBlockElement->Update($arElement['ID'],array($TargetField=>$Value))) {
-							CWDA::Log('Copy image for element #'.$arElement['ID'].' (from '.$Params['field_source'].' to '.$Params['field_target'].')', self::CODE);
+                            $cwda->Log('Copy image for element #'.$arElement['ID'].' (from '.$Params['field_source'].' to '.$Params['field_target'].')', self::CODE);
 							$bResult = true;
 						} else {
-							CWDA::Log('Error while copy image for element #'.$arElement['ID'].': '.$IBlockElement->LAST_ERROR, self::CODE);
+                            $cwda->Log('Error while copy image for element #'.$arElement['ID'].': '.$IBlockElement->LAST_ERROR, self::CODE);
 						}
 					}
 				} elseif ($TargetPropertyID>0) {
-					$arProp = CWDA::GetPropertyFromArrayById($arElement['PROPERTIES'],$TargetPropertyID);
+					$arProp = $cwda->GetPropertyFromArrayById($arElement['PROPERTIES'],$TargetPropertyID);
 					if ($arProp['MULTIPLE']!='Y' && is_array($Value)) {
 						$Value = $Value[0];
 						$Value = CFile::MakeFileArray($Value);
@@ -147,7 +151,7 @@ class CWDA_ImageCopy extends CWDA_Plugin {
 						$Value = CFile::MakeFileArray($Value);
 					}
 					CIBlockElement::SetPropertyValuesEx($arElement['ID'],$arElement['IBLOCK_ID'],array($TargetPropertyID=>$Value));
-					CWDA::Log('Copy image for element #'.$arElement['ID'].' (from '.$Params['field_source'].' to '.$Params['field_target'].')', self::CODE);
+                    $cwda->Log('Copy image for element #'.$arElement['ID'].' (from '.$Params['field_source'].' to '.$Params['field_target'].')', self::CODE);
 					$bResult = true;
 				}
 			}

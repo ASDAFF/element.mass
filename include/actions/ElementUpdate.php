@@ -6,20 +6,22 @@ class CWDA_ElementUpdate extends CWDA_Plugin {
 	//
 	static function GetDescription() {
 		$Descr = 'Плагин выполняет операцию по пересохранению элементов/товаров.';
-		if (!CWDA::IsUtf()) {
-			$Descr = CWDA::ConvertCharset($Descr);
+        $cwda = new CWDA;
+		if (!$cwda->IsUtf()) {
+			$Descr = $cwda->ConvertCharset($Descr);
 		}
 		return $Descr;
 	}
 	static function GetMessage($Code, $ConvertCharset=false) {
+        $cwda = new CWDA;
 		$MESS = array(
 			'SELECT_EVENT_CCatalogProduct_Update' => 'Обновить товар торгового каталога [CCatalogProduct::Update]',
 			'SELECT_EVENT_CIBlockElement_Update' => 'Обновить элемент инфоблока [CIBlockElement::Update]',
 			'ALERT_NOTHING_SELECTED' => 'Выберите хотя бы одно действие для пересохранения',
 		);
 		$MESS = trim($MESS[$Code]);
-		if ($ConvertCharset && !CWDA::IsUtf()) {
-			$MESS = CWDA::ConvertCharset($MESS);
+		if ($ConvertCharset && !$cwda->IsUtf()) {
+			$MESS = $cwda->ConvertCharset($MESS);
 		}
 		return $MESS;
 	}

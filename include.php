@@ -678,6 +678,7 @@ class CWDA {
 	}
 	
 	function Process($Data, $Params){
+        $cwda = new CWDA;
 		$Filter = $Data['FILTER'];
 		$Action = $Data['ACTION'];
 		$MaxTime = IntVal($Data['MAX_TIME']);
@@ -692,6 +693,7 @@ class CWDA {
 		}
 		$TimeStart = self::GetMicroTime();
 		if (CModule::IncludeModule('iblock')) {
+
 			$Class = $Action['CLASS'];
 			$SessLastID = &$_SESSION['WDA_LAST_ID_'.$Action['CODE']];
 			$resItems = CIBlockElement::GetList(array('ID'=>'ASC'),$Filter,false,false,array('ID'));
@@ -703,7 +705,7 @@ class CWDA {
 				if ($TimeCurrent-$TimeStart>=$MaxTime) {
 					return 1;
 				}
-				$arElement = CWDA::GetElementByID($arItem['ID']);
+				$arElement = $cwda->GetElementByID($arItem['ID']);
 				$bResult = $Class::Process($arItem['ID'], $arElement, $Params);
 				$_SESSION['WDA_DONE_'.$Action['CODE']]++;
 				if ($bResult) {
@@ -929,6 +931,7 @@ class CWDA {
 	 */
 	public static function WdaCheckCli() {
 		$bSuccess = true;
+        $cwda = new CWDA;
 		// Get php.exe
 		if(DIRECTORY_SEPARATOR=='/') {
 			exec('which php',$Result);
@@ -940,20 +943,20 @@ class CWDA {
 			$PhpExe = $Result[0];
 		}
 		unset($Result);
-		$PhpExe = CWDA::ReplaceDirectorySeparators($PhpExe);
+		$PhpExe = $cwda->ReplaceDirectorySeparators($PhpExe);
 		// Get php.ini
 		$PhpIni = false;
 		$ModulePath = $_SERVER['DOCUMENT_ROOT'].'/bitrix/modules/'.WDA_MODULE;
 		if(is_file($ModulePath.'/php.ini')) {
 			$PhpIni = $ModulePath.'/php.ini';
 		}
-		$PhpIni = CWDA::ReplaceDirectorySeparators($PhpIni);
+		$PhpIni = $cwda->ReplaceDirectorySeparators($PhpIni);
 		// Get check file
 		$CheckFile = false;
 		if(is_file($_SERVER['DOCUMENT_ROOT'].'/bitrix/modules/'.WDA_MODULE.'/include/cli_check.php')) {
 			$CheckFile = $_SERVER['DOCUMENT_ROOT'].'/bitrix/modules/'.WDA_MODULE.'/include/cli_check.php';
 		}
-		$CheckFile = CWDA::ReplaceDirectorySeparators($CheckFile);
+		$CheckFile = $cwda->ReplaceDirectorySeparators($CheckFile);
 		//
 		if(is_file($PhpExe) && is_file($CheckFile)) {
 			if(strpos($PhpExe,' ')!==false) {
@@ -989,6 +992,7 @@ class CWDA {
 	 *	Запуск процесса из планировщика
 	 */
 	public static function CronExec($Arguments){
+        $cwda = new CWDA;
 		unset($Arguments[0]);
 		$arParams = array(); // array like a $_GET
 		foreach($Arguments as $Argument){
@@ -1007,8 +1011,8 @@ class CWDA {
 					if($IBlockID>0) {
 						$Action = $arProfile['ACTION'];
 						if(!empty($Action)) {
-							$arActions = CWDA::GetActionsList();
-							$Action = CWDA::GetAction($Action,$arActions);
+							$arActions = $cwda->GetActionsList();
+							$Action = $cwda->GetAction($Action,$arActions);
 							if(is_array($Action)){
 								$Class = $Action['CLASS'];
 								$arSectionsID = array_filter(explode(',',$arProfile['SECTIONS_ID']));
@@ -1024,10 +1028,10 @@ class CWDA {
 								unset($arActionParams['params']);
 								$arActionParams = array_merge($arActionParams,$arActionParamsFirst);
 								//
-								$FilterFields = CWDA::GetAllFields($IBlockID);
-								$FilterParams = CWDA::CollectFilter($arFilterData['f_p2'],$arFilterData['f_e2'],$arFilterData['f_v2']);
-								$FilterResult = CWDA::BuildFilter($IBlockID, $arSectionsID, $arProfile['WITH_SUBSECTIONS']=='Y'?true:false, $FilterParams, $FilterFields);
-								$Count = CWDA::GetCount($FilterResult);
+								$FilterFields = $cwda->GetAllFields($IBlockID);
+								$FilterParams = $cwda->CollectFilter($arFilterData['f_p2'],$arFilterData['f_e2'],$arFilterData['f_v2']);
+								$FilterResult = $cwda->BuildFilter($IBlockID, $arSectionsID, $arProfile['WITH_SUBSECTIONS']=='Y'?true:false, $FilterParams, $FilterFields);
+								$Count = $cwda->GetCount($FilterResult);
 								//
 								$SuccessCount = 0;
 								$FailedCount = 0;
@@ -1037,7 +1041,7 @@ class CWDA {
 								$GLOBALS['WDA_FIRST'] = true;
 								$resItems = CIBlockElement::GetList(array('ID'=>'ASC'),$FilterResult,false,false,array('ID'));
 								while ($arItem = $resItems->GetNext()) {
-									$arElement = CWDA::GetElementByID($arItem['ID']);
+									$arElement = $cwda->GetElementByID($arItem['ID']);
 									$bResult = $Class::Process($arItem['ID'], $arElement, $arActionParams);
 									unset($GLOBALS['WDA_START']);
 									unset($GLOBALS['WDA_FIRST']);

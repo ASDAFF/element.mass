@@ -7,8 +7,9 @@ class CWDA_WebdebugImage extends CWDA_Plugin {
 	//
 	static function GetDescription() {
 		$Descr = 'Плагин для обработки картинок модулем «<a href="http://marketplace.1c-bitrix.ru/solutions/webdebug.image/" tatget="_blank">Обработчик изображений</a>».';
-		if (!CWDA::IsUtf()) {
-			$Descr = CWDA::ConvertCharset($Descr);
+        $cwda = new CWDA;
+		if (!$cwda->IsUtf()) {
+			$Descr = $cwda->ConvertCharset($Descr);
 		}
 		return $Descr;
 	}
@@ -31,8 +32,9 @@ class CWDA_WebdebugImage extends CWDA_Plugin {
 			'WD_IMAGE_PROFILE_NONAME' => '(название не указано)',
 		);
 		$MESS = trim($MESS[$Code]);
-		if ($ConvertCharset && !CWDA::IsUtf()) {
-			$MESS = CWDA::ConvertCharset($MESS);
+        $cwda = new CWDA;
+		if ($ConvertCharset && !$cwda->IsUtf()) {
+			$MESS = $cwda->ConvertCharset($MESS);
 		}
 		return $MESS;
 	}
@@ -83,17 +85,18 @@ class CWDA_WebdebugImage extends CWDA_Plugin {
 		<?
 	}
 	static function ShowSettings($IBlockID=false) {
+        $cwda = new CWDA;
 		?>
 		<?if(CModule::IncludeModule('webdebug.image')):?>
 			<div id="wda_settings_<?=self::CODE?>">
 				<div class="wda_settings_header"><?=self::GetMessage('PROP_GROUP_1');?></div>
 				<div>
-					<div><select name="params[field_source]" id="wda_field_source" class="wda_select_field"></select><?=CWDA::ShowHint(self::GetMessage('SELECT_SOURCE'));?></div>
+					<div><select name="params[field_source]" id="wda_field_source" class="wda_select_field"></select><?=$cwda->ShowHint(self::GetMessage('SELECT_SOURCE'));?></div>
 				</div>
 				<br/>
 				<div class="wda_settings_header"><?=self::GetMessage('PROP_GROUP_2');?></div>
 				<div>
-					<div><select name="params[field_target]" id="wda_field_target" class="wda_select_field"></select><?=CWDA::ShowHint(self::GetMessage('SELECT_TARGET'));?></div>
+					<div><select name="params[field_target]" id="wda_field_target" class="wda_select_field"></select><?=$cwda->ShowHint(self::GetMessage('SELECT_TARGET'));?></div>
 				</div>
 				<br/>
 				<div class="wda_settings_header"><?=self::GetMessage('PROP_WD_IMAGE_PROFILE');?></div>
@@ -105,7 +108,7 @@ class CWDA_WebdebugImage extends CWDA_Plugin {
 							<?foreach(self::WdImageGetProfiles() as $arProfile):?>
 								<option value="<?=$arProfile['ID'];?>">[<?=$arProfile['ID'];?>] <?=$arProfile['NAME'];?></option>
 							<?endforeach?>
-						</select><?=CWDA::ShowHint(self::GetMessage('SELECT_WD_IMAGE_PROFILE'));?>
+						</select><?=$cwda->ShowHint(self::GetMessage('SELECT_WD_IMAGE_PROFILE'));?>
 					</div>
 				</div>
 			</div>
@@ -120,11 +123,12 @@ class CWDA_WebdebugImage extends CWDA_Plugin {
 	}
 	static function WdImageGetProfiles(){
 		$arResult = array();
+        $cwda = new CWDA;
 		if(CModule::IncludeModule('webdebug.image')){
 			$resProfiles = CWebdebugImageProfile::GetList(array('SORT'=>'ASC','NAME'=>'ASC'),array());
 			while($arProfile = $resProfiles->GetNext(false,false)){
-				if(!CWDA::IsUtf()) {
-					$arProfile['NAME'] = CWDA::ConvertCharset($arProfile['NAME'],'CP1251','UTF-8');
+				if(!$cwda->IsUtf()) {
+					$arProfile['NAME'] = $cwda->ConvertCharset($arProfile['NAME'],'CP1251','UTF-8');
 				}
 				if(empty($arProfile['NAME'])){
 					$arProfile['NAME'] = self::GetMessage('WD_IMAGE_PROFILE_NONAME');
@@ -169,6 +173,7 @@ class CWDA_WebdebugImage extends CWDA_Plugin {
 	}
 	static function Process($ElementID, $arElement, $Params) {
 		$bResult = false;
+        $cwda = new CWDA;
 		// Source
 		$SourceField = false;
 		if(in_array($Params['field_source'],array('PREVIEW_PICTURE','DETAIL_PICTURE'))) {
@@ -200,7 +205,7 @@ class CWDA_WebdebugImage extends CWDA_Plugin {
 			if (strlen($SourceField)) {
 				$Value = $arElement[$SourceField];
 			} elseif ($SourcePropertyID>0) {
-				$arProp = CWDA::GetPropertyFromArrayById($arElement['PROPERTIES'],$SourcePropertyID);
+				$arProp = $cwda->GetPropertyFromArrayById($arElement['PROPERTIES'],$SourcePropertyID);
 				$Value = $arProp['VALUE'];
 			}
 			if (!empty($Value)) {
@@ -216,7 +221,7 @@ class CWDA_WebdebugImage extends CWDA_Plugin {
 						}
 					}
 				} elseif ($TargetPropertyID>0) {
-					$arProp = CWDA::GetPropertyFromArrayById($arElement['PROPERTIES'],$TargetPropertyID);
+					$arProp = $cwda->GetPropertyFromArrayById($arElement['PROPERTIES'],$TargetPropertyID);
 					if ($arProp['MULTIPLE']!='Y' && is_array($Value)) {
 						$Value = $Value[0];
 						$Value = self::ProcessImages($ProfileID,$Value);

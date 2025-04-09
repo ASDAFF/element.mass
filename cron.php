@@ -8,6 +8,7 @@ require($_SERVER['DOCUMENT_ROOT'].'/bitrix/modules/main/include/prolog_before.ph
 set_time_limit(0);
 ignore_user_abort(true);
 if (CModule::IncludeModule('element.mass')) {
-	CWDA::CronExec($argv);
+    $cwda = new CWDA;
+    $cwda->CronExec($argv);
 }
 ?>

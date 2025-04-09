@@ -6,8 +6,9 @@ class CWDA_PriceChange extends CWDA_Plugin {
 	//
 	static function GetDescription() {
 		$Descr = 'Плагин для изменения цен. Доступны как увеличения цен, так и снижения. Имеется возможность увеличивать/уменьшать цены как процентным указанием (напр., <b>5%</b> [равно как и +5%] и <b>-5%</b>), так и числовым (напр., <b>200</b> [равно как и +200], и <b>-200</b>). Также доступна возможность округления несколькими способами.';
-		if (!CWDA::IsUtf()) {
-			$Descr = CWDA::ConvertCharset($Descr);
+        $cwda = new CWDA;
+		if (!$cwda->IsUtf()) {
+			$Descr = $cwda->ConvertCharset($Descr);
 		}
 		return $Descr;
 	}
@@ -46,8 +47,9 @@ class CWDA_PriceChange extends CWDA_Plugin {
 			'CATALOG_PURCHASING_PRICE' => 'Закупочная цена',
 		);
 		$MESS = trim($MESS[$Code]);
-		if ($ConvertCharset && !CWDA::IsUtf()) {
-			$MESS = CWDA::ConvertCharset($MESS);
+        $cwda = new CWDA;
+		if ($ConvertCharset && !$cwda->IsUtf()) {
+			$MESS = $cwda->ConvertCharset($MESS);
 		}
 		return $MESS;
 	}
@@ -122,11 +124,12 @@ class CWDA_PriceChange extends CWDA_Plugin {
 		return '';
 	}
 	static function ShowSettings($IBlockID=false) {
+        $cwda = new CWDA;
 		?>
 		<div id="wda_settings_<?=self::CODE?>">
 			<div class="wda_settings_header"><?=self::GetMessage('FIELD_SOURCE');?></div>
 			<div>
-				<div><select name="params[field_source]" id="wda_field_source" class="wda_select_field"></select><?=CWDA::ShowHint(self::GetMessage('SELECT_SOURCE_PRICE'));?></div>
+				<div><select name="params[field_source]" id="wda_field_source" class="wda_select_field"></select><?=$cwda->ShowHint(self::GetMessage('SELECT_SOURCE_PRICE'));?></div>
 			</div>
 			<br/>
 			<div class="wda_settings_header"><?=self::GetMessage('PROP_GROUP_ADDITIONAL_SETTINGS');?></div>
@@ -136,7 +139,7 @@ class CWDA_PriceChange extends CWDA_Plugin {
 						<tr>
 							<td class="label" colspan="2">
 								<label for="wda_input_change_value"><?=self::GetMessage('PARAM_CHANGE_VALUE');?></label>
-								<?=CWDA::ShowHint(self::GetMessage('HINT_PARAM_CHANGE_VALUE'));?>
+								<?=$cwda->ShowHint(self::GetMessage('HINT_PARAM_CHANGE_VALUE'));?>
 							</td>
 							<td class="value">
 								<input type="text" name="params[change_value]" value="+10%" size="10" maxlength="10" id="wda_input_change_value" />
@@ -148,7 +151,7 @@ class CWDA_PriceChange extends CWDA_Plugin {
 							</td>
 							<td class="label">
 								<label for="wda_checkbox_use_purchase"><?=self::GetMessage('PARAM_USE_PURCHASE');?></label>
-								<?=CWDA::ShowHint(self::GetMessage('HINT_PARAM_USE_PURCHASE'));?>
+								<?=$cwda->ShowHint(self::GetMessage('HINT_PARAM_USE_PURCHASE'));?>
 							</td>
 							<td class="value"></td>
 						</tr>
@@ -158,7 +161,7 @@ class CWDA_PriceChange extends CWDA_Plugin {
 							</td>
 							<td class="label">
 								<label for="wda_checkbox_round"><?=self::GetMessage('PARAM_ROUND');?></label>
-								<?=CWDA::ShowHint(self::GetMessage('HINT_PARAM_ROUND'));?>
+								<?=$cwda->ShowHint(self::GetMessage('HINT_PARAM_ROUND'));?>
 							</td>
 							<td class="value">
 								<select name="params[round_value]">
@@ -174,7 +177,7 @@ class CWDA_PriceChange extends CWDA_Plugin {
 							</td>
 							<td class="label">
 								<label for="wda_checkbox_format"><?=self::GetMessage('PARAM_FORMAT');?></label>
-								<?=CWDA::ShowHint(self::GetMessage('HINT_PARAM_FORMAT'));?>
+								<?=$cwda->ShowHint(self::GetMessage('HINT_PARAM_FORMAT'));?>
 							</td>
 							<td class="value">
 								<?$arFormats = self::GetPriceFormats();?>
@@ -191,7 +194,7 @@ class CWDA_PriceChange extends CWDA_Plugin {
 							</td>
 							<td class="label" colspan="2">
 								<label for="wda_checkbox_offers"><?=self::GetMessage('PARAM_OFFERS');?></label>
-								<?=CWDA::ShowHint(self::GetMessage('HINT_PARAM_OFFERS'));?>
+								<?=$cwda->ShowHint(self::GetMessage('HINT_PARAM_OFFERS'));?>
 							</td>
 						</tr>
 						<tr>
@@ -200,7 +203,7 @@ class CWDA_PriceChange extends CWDA_Plugin {
 							</td>
 							<td class="label">
 								<label for="wda_checkbox_limit_below"><?=self::GetMessage('PARAM_LIMIT_BELOW');?></label>
-								<?=CWDA::ShowHint(self::GetMessage('HINT_PARAM_LIMIT_BELOW'));?>
+								<?=$cwda->ShowHint(self::GetMessage('HINT_PARAM_LIMIT_BELOW'));?>
 							</td>
 							<td>
 								<input type="text" name="params[limit_below_value]" value="+10%" size="10" maxlength="5" id="wda_limit_below_value" />
@@ -243,6 +246,7 @@ class CWDA_PriceChange extends CWDA_Plugin {
 	static function Process($ElementID, $arElement, $Params) {
 		$bResult = false;
 		$UsePurchasePrice = $Params['use_purchase']=='Y';
+        $cwda = new CWDA;
 		// Source
 		$SourcePriceID = false;
 		if(preg_match('#^CATALOG_PRICE_(\d+)$#i',$Params['field_source'],$M)) {
@@ -272,7 +276,7 @@ class CWDA_PriceChange extends CWDA_Plugin {
 				$PriceRaw = FloatVal($arElement['CATALOG_PRICE_'.$SourcePriceID]);
 				$SourceCurrency = $arElement['CATALOG_CURRENCY_'.$SourcePriceID];
 			} elseif ($SourcePropertyID>0) {
-				$arProp = CWDA::GetPropertyFromArrayById($arElement['PROPERTIES'], $SourcePropertyID);
+				$arProp = $cwda->GetPropertyFromArrayById($arElement['PROPERTIES'], $SourcePropertyID);
 				$PriceRaw = $arProp['VALUE'];
 				if (is_array($PriceRaw) && !empty($PriceRaw)) {
 					foreach($PriceRaw as $PriceRawItem) {
@@ -305,7 +309,7 @@ class CWDA_PriceChange extends CWDA_Plugin {
 			}
 			// 2.2 round price
 			if ($Params['round']=='Y') {
-				$Price = CWDA::RoundEx($Price, IntVal($Params['round_value']));
+				$Price = $cwda->RoundEx($Price, IntVal($Params['round_value']));
 			}
 			// 3. save value
 			if ($SourcePropertyID>0) {
@@ -313,15 +317,15 @@ class CWDA_PriceChange extends CWDA_Plugin {
 					$Price = self::FormatPrice($Price, $Params['format_value']);
 				}
 				CIBlockElement::SetPropertyValuesEx($ElementID, $arElement['IBLOCK_ID'], array($SourcePropertyID=>$Price));
-				CWDA::Log('Set price for element #'.$ElementID.' from '.$PriceBefore.' to '.$PriceAfter.' (property #'.$SourcePropertyID.', change:'.$Params['change_value'].')', self::CODE);
+                $cwda->Log('Set price for element #'.$ElementID.' from '.$PriceBefore.' to '.$PriceAfter.' (property #'.$SourcePropertyID.', change:'.$Params['change_value'].')', self::CODE);
 				$bResult = true;
 			} elseif ($SourcePriceID>0) {
 				$Currency = 'RUB';
 				if (strlen($SourceCurrency)) {
 					$Currency = $SourceCurrency;
 				}
-				if (CWDA::SetProductPrice($ElementID, $SourcePriceID, $Price, $Currency)) {
-					CWDA::Log('Set price for element #'.$ElementID.' from '.$PriceBefore.' to '.$PriceAfter.' (price #'.$SourcePriceID.', change:'.$Params['change_value'].')', self::CODE);
+				if ($cwda->SetProductPrice($ElementID, $SourcePriceID, $Price, $Currency)) {
+                    $cwda->Log('Set price for element #'.$ElementID.' from '.$PriceBefore.' to '.$PriceAfter.' (price #'.$SourcePriceID.', change:'.$Params['change_value'].')', self::CODE);
 					$bResult = true;
 				}
 			} elseif ($SourcePurchasing) {
@@ -336,10 +340,10 @@ class CWDA_PriceChange extends CWDA_Plugin {
 						'PURCHASING_CURRENCY' => $Currency,
 					);
 					if (CCatalogProduct::Add($arFields)) {
-						CWDA::Log('Set price ['.$Price.'] for element #'.$ElementID.' to price #'.$TargetPriceID, self::CODE);
+                        $cwda->Log('Set price ['.$Price.'] for element #'.$ElementID.' to price #'.$TargetPriceID, self::CODE);
 						$bResult = true;
 					} else {
-						CWDA::Log('Error update '.$Target.' for element #'.$ElementID.', fields: '.print_r($arFields,1));
+                        $cwda->Log('Error update '.$Target.' for element #'.$ElementID.', fields: '.print_r($arFields,1));
 					}
 				}
 			}
@@ -352,7 +356,7 @@ class CWDA_PriceChange extends CWDA_Plugin {
 			if ($arCatalog['OFFERS_IBLOCK_ID']>0 && $arCatalog['OFFERS_PROPERTY_ID']) {
 				$resOffers = CIBlockElement::GetList(array('ID'=>'ASC'),array('IBLOCK_ID'=>$arCatalog['OFFERS_IBLOCK_ID'],'PROPERTY_'.$arCatalog['OFFERS_PROPERTY_ID']=>$ElementID),false,false,array('ID'));
 				while ($arOffer = $resOffers->GetNext(false,false)) {
-					$arOfferFields = CWDA::GetElementByID($arOffer['ID']);
+					$arOfferFields = $cwda->GetElementByID($arOffer['ID']);
 					self::Process($arOffer['ID'], $arOfferFields, $OfferParams);
 				}
 			}

@@ -6,8 +6,9 @@ class CWDA_ProductSet extends CWDA_Plugin {
 	//
 	static function GetDescription() {
 		$Descr = 'Плагин позволяет собирать наборы и комплекты для выбранных по фильтру товаров.<br/>Если в результате обработки имеются ошибки, смотрите файл лога.';
-		if (!CWDA::IsUtf()) {
-			$Descr = CWDA::ConvertCharset($Descr);
+        $cwda = new CWDA;
+		if (!$cwda->IsUtf()) {
+			$Descr = $cwda->ConvertCharset($Descr);
 		}
 		return $Descr;
 	}
@@ -32,8 +33,9 @@ class CWDA_ProductSet extends CWDA_Plugin {
 			'ALERT_QUANTITY_EMPTY' => 'Необходимо указать количества для всех товаров в наборе/комплекте.',
 		);
 		$MESS = trim($MESS[$Code]);
-		if ($ConvertCharset && !CWDA::IsUtf()) {
-			$MESS = CWDA::ConvertCharset($MESS);
+        $cwda = new CWDA;
+		if ($ConvertCharset && !$cwda->IsUtf()) {
+			$MESS = $cwda->ConvertCharset($MESS);
 		}
 		return $MESS;
 	}
@@ -211,6 +213,7 @@ class CWDA_ProductSet extends CWDA_Plugin {
 	}
 	static function Process($ElementID, $arElement, $Params) {
 		$bResult = false;
+        $cwda = new CWDA;
 		if(CModule::IncludeModule('catalog') && class_exists('CCatalogProductSet') && is_array($Params['products']) && !empty($Params['products'])) {
 			$intType = $Params['set_type']==1 ? CCatalogProductSet::TYPE_SET : CCatalogProductSet::TYPE_GROUP;
 			//
@@ -249,8 +252,8 @@ class CWDA_ProductSet extends CWDA_Plugin {
 					$obCatalogProductSet->RecalculateSetsByProduct($ElementID);
 					$bResult = true;
 				} else {
-					CWDA::Log('Errors for element #'.$ElementID.' (update mode)');
-					CWDA::Log($obCatalogProductSet->getErrors());
+                    $cwda->Log('Errors for element #'.$ElementID.' (update mode)');
+                    $cwda->Log($obCatalogProductSet->getErrors());
 				}
 			} else {
 				$arSetFields['ACTIVE'] = 'Y';
@@ -258,8 +261,8 @@ class CWDA_ProductSet extends CWDA_Plugin {
 				if ($obCatalogProductSet->Add($arSetFields)) {
 					$bResult = true;
 				} else {
-					CWDA::Log('Errors for element #'.$ElementID.' (add mode)');
-					CWDA::Log($obCatalogProductSet->getErrors());
+                    $cwda->Log('Errors for element #'.$ElementID.' (add mode)');
+                    $cwda->Log($obCatalogProductSet->getErrors());
 				}
 			}
 		}

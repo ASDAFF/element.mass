@@ -37,15 +37,16 @@ $arExcludeKeys = array('autosave_id',
 );
 
 // IBlock
+$cwda = new CWDA;
 $IBlockID = IntVal($_GET['IBLOCK_ID']);
-$arIBlocks = CWDA::GetIBlockList(true, false);
+$arIBlocks = $cwda->GetIBlockList(true, false);
 $strJSON = '';
 foreach ($arIBlocks as $IBlockTypeCode => $arIBlockType) {
     if (is_array($arIBlockType['ITEMS']) && !empty($arIBlockType['ITEMS'])) {
         foreach ($arIBlockType['ITEMS'] as $arIBlock) {
             $arIBlockFields = CIBlock::GetFields($arIBlock['ID']);
-            if (!CWDA::IsUtf()) {
-                $arIBlockFields = CWDA::ConvertCharset($arIBlockFields, 'CP1251', 'UTF-8');
+            if (!$cwda->IsUtf()) {
+                $arIBlockFields = $cwda->ConvertCharset($arIBlockFields, 'CP1251', 'UTF-8');
             }
             $strJSON .= 'var IBlock_' . $arIBlock['ID'] . ' = ' . json_encode($arIBlockFields) . ';';
         }
@@ -96,7 +97,7 @@ var WDA = {
 
 // Action
 $ActionCode = htmlspecialcharsbx(ToUpper($_GET['ACTION']));
-$arActions = CWDA::GetActionsList();
+$arActions = $cwda->GetActionsList();
 foreach ($arActions as $arAction) {
     if (is_array($arAction)) {
         ob_start();
@@ -109,7 +110,8 @@ foreach ($arActions as $arAction) {
 }
 
 // Group actions
-$arActionGroups = CWDA::GetActionsGroup();
+$cwda = new CWDA;
+$arActionGroups = $cwda->GetActionsGroup();
 $arActionsGrouped = array();
 foreach ($arActionGroups as $GroupCode => $GroupName) {
     $arSubAction = array();
@@ -133,7 +135,7 @@ if ($_GET['process'] == 'Y') {
     $IBlockID = IntVal($_POST['iblock_id']);
     // Get action
     $ActionCode = $_POST['action'];
-    $Action = CWDA::GetAction($ActionCode, $arActions);
+    $Action = $cwda->GetAction($ActionCode, $arActions);
     if (is_array($Action) && $bCanWrite) {
         $Class = $Action['CLASS'];
         if ($IBlockID > 0) {
@@ -142,9 +144,9 @@ if ($_GET['process'] == 'Y') {
             if (is_array($arSectionsID)) {
                 $arSectionsID = array_filter($arSectionsID);
             }
-            $FilterFields = CWDA::GetAllFields($IBlockID);
-            $FilterParams = CWDA::CollectFilter($_POST['f_p2'], $_POST['f_e2'], $_POST['f_v2']);
-            $FilterResult = CWDA::BuildFilter($IBlockID, $arSectionsID, $_POST['sub'] == 'Y' ? true : false,
+            $FilterFields = $cwda->GetAllFields($IBlockID);
+            $FilterParams = $cwda->CollectFilter($_POST['f_p2'], $_POST['f_e2'], $_POST['f_v2']);
+            $FilterResult = $cwda->BuildFilter($IBlockID, $arSectionsID, $_POST['sub'] == 'Y' ? true : false,
                 $FilterParams, $FilterFields);
             if (is_array($FilterResult) && !empty($FilterResult)) {
                 if ($_GET['start'] == 'Y') {
@@ -159,7 +161,7 @@ if ($_GET['process'] == 'Y') {
                         $_SESSION['WDA_CUSTOM_' . $Action['CODE']]
                     );
                     // Get count
-                    $_SESSION['WDA_COUNT_' . $Action['CODE']] = CWDA::GetCount($FilterResult);
+                    $_SESSION['WDA_COUNT_' . $Action['CODE']] = $cwda->GetCount($FilterResult);
                     $_SESSION['WDA_LAST_ID_' . $Action['CODE']] = 0;
                     $_SESSION['WDA_DONE_' . $Action['CODE']] = 0;
                     $_SESSION['WDA_FAILED_' . $Action['CODE']] = 0;
@@ -187,7 +189,7 @@ if ($_GET['process'] == 'Y') {
                             $arParams[$Key] = $Value;
                         }
                     }
-                    $arResult['status'] = CWDA::Process($arData, $arParams);
+                    $arResult['status'] = $cwda->Process($arData, $arParams);
                     $arResult['index'] = IntVal($_SESSION['WDA_DONE_' . $Action['CODE']]);
                     $arResult['succeed'] = IntVal($_SESSION['WDA_SUCCEED_' . $Action['CODE']]);
                     $arResult['failed'] = IntVal($_SESSION['WDA_FAILED_' . $Action['CODE']]);
@@ -211,15 +213,15 @@ if ($_GET['show_additional_settings'] == 'Y') {
     $APPLICATION->RestartBuffer();
     $IBlockID = IntVal($_GET['iblock_id']);
     $Action = htmlspecialcharsbx($_GET['action']);
-    $Action = CWDA::GetAction($Action, $arActions);
+    $Action = $cwda->GetAction($Action, $arActions);
     if (is_array($Action)) {
         $Class = $Action['CLASS'];
         if (method_exists($Class, 'ShowAdditionalSettings')) {
             ob_start();
             $Class::ShowAdditionalSettings();
             $Settings = trim(ob_get_clean());
-            if (!CWDA::IsUtf()) {
-                $Settings = CWDA::ConvertCharset($Settings);
+            if (!$cwda->IsUtf()) {
+                $Settings = $cwda->ConvertCharset($Settings);
             }
             print $Settings;
         }
@@ -231,14 +233,14 @@ if ($_GET['show_action_settings'] == 'Y') {
     $APPLICATION->RestartBuffer();
     $IBlockID = IntVal($_GET['iblock_id']);
     $Action = htmlspecialcharsbx($_GET['action']);
-    $Action = CWDA::GetAction($Action, $arActions);
+    $Action = $cwda->GetAction($Action, $arActions);
     if (is_array($Action)) {
         $Class = $Action['CLASS'];
         ob_start();
         $Class::ShowSettings($IBlockID);
         $Settings = trim(ob_get_clean());
-        if (!CWDA::IsUtf()) {
-            $Settings = CWDA::ConvertCharset($Settings);
+        if (!$cwda->IsUtf()) {
+            $Settings = $cwda->ConvertCharset($Settings);
         }
         $Descr = false;
         if (method_exists($Class, 'GetDescription')) {
@@ -266,7 +268,7 @@ if ($_GET['load_property_enums'] == 'Y') {
     $IBlockID = IntVal($_GET['iblock_id']);
     $PropertyID = IntVal($_GET['property_id']);
     if ($IBlockID > 0 && $PropertyID > 0) {
-        $arResult['ITEMS'] = CWDA::GetPropertyEnums($IBlockID, $PropertyID);
+        $arResult['ITEMS'] = $cwda->GetPropertyEnums($IBlockID, $PropertyID);
     }
     $APPLICATION->RestartBuffer();
     print json_encode($arResult);
@@ -281,9 +283,9 @@ if ($_GET['change_iblock'] == 'Y') {
     );
     $IBlockID = IntVal($_GET['iblock_id']);
     if ($IBlockID > 0) {
-        $arResult['SECTIONS'] = CWDA::GetSections($IBlockID);
-        $arResult['FILTER_FIELDS'] = CWDA::GetAllFields($IBlockID);
-        $arResult['GROUPS'] = CWDA::GetFilterFieldsGroups();
+        $arResult['SECTIONS'] = $cwda->GetSections($IBlockID);
+        $arResult['FILTER_FIELDS'] = $cwda->GetAllFields($IBlockID);
+        $arResult['GROUPS'] = $cwda->GetFilterFieldsGroups();
     }
     $APPLICATION->RestartBuffer();
     print json_encode($arResult);
@@ -299,13 +301,13 @@ if ($_GET['check_filter_results'] == 'Y') {
         if (is_array($arSectionsID) && count($arSectionsID) === 1 && isset($arSectionsID[0]) && $arSectionsID[0] === '') {
             $arSectionsID = false;
         }
-        $FilterFields = CWDA::GetAllFields($IBlockID);
-        $FilterParams = CWDA::CollectFilter($_POST['f_p2'], $_POST['f_e2'], $_POST['f_v2']);
-        $Filter = CWDA::BuildFilter($IBlockID, $arSectionsID, $_POST['sub'] == 'Y' ? true : false, $FilterParams,
+        $FilterFields = $cwda->GetAllFields($IBlockID);
+        $FilterParams = $cwda->CollectFilter($_POST['f_p2'], $_POST['f_e2'], $_POST['f_v2']);
+        $Filter = $cwda->BuildFilter($IBlockID, $arSectionsID, $_POST['sub'] == 'Y' ? true : false, $FilterParams,
             $FilterFields);
         if (is_array($Filter) && !empty($Filter)) {
-            $arResult['count'] = CWDA::GetCount($Filter);
-            $arResult['count_approximately'] = CWDA::GetApproximately($arResult['count']);
+            $arResult['count'] = $cwda->GetCount($Filter);
+            $arResult['count_approximately'] = $cwda->GetApproximately($arResult['count']);
         }
     }
     $APPLICATION->RestartBuffer();
@@ -316,8 +318,8 @@ if ($_GET['check_filter_results'] == 'Y') {
 if ($_GET['save_profile'] == 'Y') {
     header("Content-type: application/json");
     $arResult = array();
-    if (!CWDA::IsUtf()) {
-        $_POST = CWDA::ConvertCharset($_POST, 'UTF-8', 'CP1251');
+    if (!$cwda->IsUtf()) {
+        $_POST = $cwda->ConvertCharset($_POST, 'UTF-8', 'CP1251');
     }
     $arActionParams = array(
         'params' => $_POST['params'],
@@ -364,7 +366,7 @@ $arTabs = array(array("DIV" => "wda_settigns",
 );
 $tabControl = new CAdminTabControl("WDA_Tabs", $arTabs);
 require_once($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_admin_after.php");
-$arComparisonTypesJSON = CWDA::GetComparisonTypesJSON();
+$arComparisonTypesJSON = $cwda->GetComparisonTypesJSON();
 $APPLICATION->AddHeadString('<script>var WdaComparisonTypes=' . $arComparisonTypesJSON . ';</script>');
 ?>
 
@@ -380,8 +382,8 @@ $arSubMenu = array();
 $resProfiles = CWDA_Profile::GetList(array('SORT' => 'ASC', 'NAME' => 'ASC'), array(), 1000);
 while ($arProfile = $resProfiles->GetNext()) {
     $arJson = $arProfile;
-    if (!CWDA::IsUtf()) {
-        $arJson = CWDA::ConvertCharset($arJson, 'CP1251', 'UTF-8');
+    if (!$cwda->IsUtf()) {
+        $arJson = $cwda->ConvertCharset($arJson, 'CP1251', 'UTF-8');
     }
     $APPLICATION->AddHeadString('<script>window.WdaProfile' . $arProfile['ID'] . '=' . json_encode($arJson) . '</script>');
     $arSubMenu[] = array(
@@ -494,7 +496,8 @@ $context->Show();
                         <? endforeach ?>
                     </select>
                     <input type="button" value="<?= GetMessage('WDA_ADMIN_ACTION_REFRESH'); ?>" id="wda_select_action_refresh" style="height:26px; vertical-align:top;"/>
-                    <?= CWDA::ShowHint(GetMessage('WDA_HINT_SELECT_ACTION')); ?>
+                    <? $cwda = new CWDA;?>
+                    <?= $cwda->ShowHint(GetMessage('WDA_HINT_SELECT_ACTION')); ?>
                 </div>
                 <br/>
                 <div id="wda_action_params"></div> <!-- ajax fields -->
@@ -517,7 +520,7 @@ $context->Show();
     <div id="wda_message"></div>
 
 <?
-if (!CWDA::WdaCheckCli()) {
+if (!$cwda->WdaCheckCli()) {
     CAdminMessage::ShowMessage(array(
         "MESSAGE" => GetMessage("WDA_CLI_CHECK_TITLE"),
         "DETAILS" => GetMessage("WDA_CLI_CHECK_CONTENT"),

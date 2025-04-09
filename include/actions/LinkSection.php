@@ -6,8 +6,9 @@ class CWDA_LinkSection extends CWDA_Plugin {
 	//
 	static function GetDescription() {
 		$Descr = 'Плагин выполняет операции по переносу элементов в заданный раздел, а также по добавлению привязки к заданному разделу.';
-		if (!CWDA::IsUtf()) {
-			$Descr = CWDA::ConvertCharset($Descr);
+        $cwda = new CWDA;
+		if (!$cwda->IsUtf()) {
+			$Descr = $cwda->ConvertCharset($Descr);
 		}
 		return $Descr;
 	}
@@ -21,8 +22,9 @@ class CWDA_LinkSection extends CWDA_Plugin {
 				'SELECT_SECTION_EMPTY' => '--- выберите раздел ---',
 		);
 		$MESS = trim($MESS[$Code]);
-		if ($ConvertCharset && !CWDA::IsUtf()) {
-			$MESS = CWDA::ConvertCharset($MESS);
+        $cwda = new CWDA;
+		if ($ConvertCharset && !$cwda->IsUtf()) {
+			$MESS = $cwda->ConvertCharset($MESS);
 		}
 		return $MESS;
 	}

@@ -11,10 +11,11 @@ abstract class CWDA_Plugin {
 		return static::CODE;
 	}
 	static function GetName(){
-		if (CWDA::IsUtf()) {
+        $cwda = new CWDA;
+		if ($cwda->IsUtf()) {
 			return static::NAME;
 		} else {
-			return CWDA::ConvertCharset(static::NAME);
+			return $cwda->ConvertCharset(static::NAME);
 		}
 	}
 	//

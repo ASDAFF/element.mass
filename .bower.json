@@ -1,0 +1,22 @@
+{
+  "name": "element.mass",
+  "main": "",
+  "ignore": [
+    "source",
+    ".gitignore",
+    ".idea",
+    "bower.json",
+    "gulpfile.js",
+    "package.json"
+  ],
+  "homepage": "https://github.com/ASDAFF/element.mass",
+  "_release": "8e094496c7",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "8e094496c7f6ae748cf56c0c94ce8c5f5541bdde"
+  },
+  "_source": "https://github.com/ASDAFF/element.mass.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/ASDAFF/element.mass.git"
+}

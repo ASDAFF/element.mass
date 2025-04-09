@@ -3,7 +3,8 @@ require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_admi
 require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/element.mass/prolog.php");
 CModule::IncludeModule('element.mass');
 IncludeModuleLangFile(__FILE__);
-$arModuleActions = CWDA::GetActionsList();
+$cwda = new CWDA;
+$arModuleActions = $cwda->GetActionsList();
 $arIBlocks = array();
 if(CModule::IncludeModule('iblock')) {
 	$resIBlocks = CIBlock::GetList();
@@ -242,7 +243,7 @@ while ($arRes = $rsData->NavNext(true, "f_")) {
 		"TEXT" => GetMessage("WDA_PROFILES_CONTEXT_DELETE"),
 		"ACTION" => "if(confirm('".sprintf(GetMessage('WDA_PROFILES_CONTEXT_DELETE_CONFIRM'), $f_NAME)."')) ".$lAdmin->ActionDoGroup($f_ID, "delete")
 	);
-	$Command = CWDA::GetCronCommand($f_ID);
+	$Command = $cwda->GetCronCommand($f_ID);
 	if($Command!==false) {
 		$arActions[] = array(
 			"SEPARATOR" => true
@@ -317,7 +318,7 @@ $oFilter = new CAdminFilter(
 	<tr>
 		<td><?=GetMessage("WDA_PROFILES_FILTER_IBLOCK_ID")?>:</td>
 		<td>
-			<?$arIBlocks = CWDA::GetIBlockList(true, false);?>
+			<?$arIBlocks = $cwda->GetIBlockList(true, false);?>
 			<select name="find_iblock_id">
 				<option value=""><?=GetMessage('MAIN_ALL');?></option>
 				<?foreach($arIBlocks as $IBlockTypeCode => $arIBlockType):?>
@@ -351,7 +352,7 @@ $oFilter = new CAdminFilter(
 <?$lAdmin->DisplayList();?>
 
 <?
-if(!CWDA::WdaCheckCli()) {
+if(!$cwda->WdaCheckCli()) {
 	CAdminMessage::ShowMessage(array(
 		"MESSAGE" => GetMessage("WDA_CLI_CHECK_TITLE"),
 		"DETAILS" => GetMessage("WDA_CLI_CHECK_CONTENT"),

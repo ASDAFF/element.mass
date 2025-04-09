@@ -5,9 +5,10 @@ class CWDA_CodeGeneration extends CWDA_Plugin {
 	CONST NAME = 'Генерация символьного кода';
 	//
 	static function GetDescription() {
+        $cwda = new CWDA;
 		$Descr = 'Плагин выполняет генерацию символьного кода из другого поля или свойства. Плагин имеет большое количество настраиваемых параметров для обеспечения наиболее приемлемого результата.';
-		if (!CWDA::IsUtf()) {
-			$Descr = CWDA::ConvertCharset($Descr);
+		if (! $cwda->IsUtf()) {
+			$Descr =  $cwda->ConvertCharset($Descr);
 		}
 		return $Descr;
 	}
@@ -53,8 +54,9 @@ class CWDA_CodeGeneration extends CWDA_Plugin {
 			'HINT_TEXT_AFTER' => 'Текст, который будет добавляться к символьному коду в конце.',
 		);
 		$MESS = trim($MESS[$Code]);
-		if ($ConvertCharset && !CWDA::IsUtf()) {
-			$MESS = CWDA::ConvertCharset($MESS);
+        $cwda = new CWDA;
+		if ($ConvertCharset && ! $cwda->IsUtf()) {
+			$MESS =  $cwda->ConvertCharset($MESS);
 		}
 		return $MESS;
 	}
@@ -95,6 +97,7 @@ class CWDA_CodeGeneration extends CWDA_Plugin {
 		<?
 	}
 	static function ShowSettings($IBlockID=false) {
+        $cwda = new CWDA;
 		?>
 		<div id="wda_settings_<?=self::CODE?>">
 			<div class="wda_settings_header"><?=self::GetMessage('PROP_GROUP_1');?></div>
@@ -110,7 +113,7 @@ class CWDA_CodeGeneration extends CWDA_Plugin {
 						</td>
 						<td class="label" colspan="2">
 							<label for="wda_checkbox_translit"><?=self::GetMessage('PROP_TRANSLIT');?></label>
-							<?=CWDA::ShowHint(self::GetMessage('HINT_TRANSLIT'));?>
+							<?=$cwda->ShowHint(self::GetMessage('HINT_TRANSLIT'));?>
 						</td>
 					</tr>
 					<tr>
@@ -119,7 +122,7 @@ class CWDA_CodeGeneration extends CWDA_Plugin {
 						</td>
 						<td class="label" colspan="2">
 							<label for="wda_checkbox_trim"><?=self::GetMessage('PROP_TRIM');?></label>
-							<?=CWDA::ShowHint(self::GetMessage('HINT_TRIM'));?>
+							<?=$cwda->ShowHint(self::GetMessage('HINT_TRIM'));?>
 						</td>
 					</tr>
 					<tr>
@@ -128,7 +131,7 @@ class CWDA_CodeGeneration extends CWDA_Plugin {
 						</td>
 						<td class="label" colspan="2">
 							<label for="wda_checkbox_unique"><?=self::GetMessage('PROP_UNIQUE');?></label>
-							<?=CWDA::ShowHint(self::GetMessage('HINT_UNIQUE'));?>
+							<?=$cwda->ShowHint(self::GetMessage('HINT_UNIQUE'));?>
 						</td>
 					</tr>
 					<tr>
@@ -137,14 +140,14 @@ class CWDA_CodeGeneration extends CWDA_Plugin {
 						</td>
 						<td class="label" colspan="2">
 							<label for="wda_checkbox_removeextra"><?=self::GetMessage('PROP_REMOVEEXTRA');?></label>
-							<?=CWDA::ShowHint(self::GetMessage('HINT_REMOVEEXTRA'));?>
+							<?=$cwda->ShowHint(self::GetMessage('HINT_REMOVEEXTRA'));?>
 						</td>
 					</tr>
 					<tr>
 						<td class="check"></td>
 						<td class="label">
 							<label for="wda_checkbox_case"><?=self::GetMessage('PROP_CASE');?></label>
-							<?=CWDA::ShowHint(self::GetMessage('HINT_CASE'));?>
+							<?=$cwda->ShowHint(self::GetMessage('HINT_CASE'));?>
 						</td>
 						<td class="input">
 							<select name="params[case_value]" id="wda_select_case">
@@ -158,7 +161,7 @@ class CWDA_CodeGeneration extends CWDA_Plugin {
 						<td class="check"></td>
 						<td class="label">
 							<label for="wda_checkbox_length"><?=self::GetMessage('PROP_LEN');?></label>
-							<?=CWDA::ShowHint(self::GetMessage('HINT_LENGTH'));?>
+							<?=$cwda->ShowHint(self::GetMessage('HINT_LENGTH'));?>
 						</td>
 						<td class="input">
 							<input type="text" name="params[length_value]" value="100" size="5" id="wda_input_length" />
@@ -168,7 +171,7 @@ class CWDA_CodeGeneration extends CWDA_Plugin {
 						<td class="check"></td>
 						<td class="label">
 							<label for="wda_checkbox_space"><?=self::GetMessage('PROP_REPLACE_SPACE');?></label>
-							<?=CWDA::ShowHint(self::GetMessage('HINT_SPACE'));?>
+							<?=$cwda->ShowHint(self::GetMessage('HINT_SPACE'));?>
 						</td>
 						<td class="input">
 							<input type="text" name="params[space_value]" value="-" size="5" style="font-family:monospace;" id="wda_input_space" />
@@ -178,7 +181,7 @@ class CWDA_CodeGeneration extends CWDA_Plugin {
 						<td class="check"></td>
 						<td class="label">
 							<label for="wda_checkbox_specsymbols"><?=self::GetMessage('PROP_REPLACE_OTHER');?></label>
-							<?=CWDA::ShowHint(self::GetMessage('HINT_SPECSYMBOLS'));?>
+							<?=$cwda->ShowHint(self::GetMessage('HINT_SPECSYMBOLS'));?>
 						</td>
 						<td class="input">
 							<input type="text" name="params[specsymbols_value]" value="_" size="5" style="font-family:monospace;" id="wda_input_specsymbols" />
@@ -188,7 +191,7 @@ class CWDA_CodeGeneration extends CWDA_Plugin {
 						<td class="check"></td>
 						<td class="label">
 							<label for="wda_checkbox_if_exists"><?=self::GetMessage('PROP_IF_EXISTS');?></label>
-							<?=CWDA::ShowHint(self::GetMessage('HINT_IF_EXISTS'));?>
+							<?=$cwda->ShowHint(self::GetMessage('HINT_IF_EXISTS'));?>
 						</td>
 						<td class="input">
 							<select name="params[if_exists]" id="wda_select_if_exists">
@@ -204,7 +207,7 @@ class CWDA_CodeGeneration extends CWDA_Plugin {
 						<td class="check"></td>
 						<td class="label">
 							<label for="wda_checkbox_text_before"><?=self::GetMessage('PROP_TEXT_BEFORE');?></label>
-							<?=CWDA::ShowHint(self::GetMessage('HINT_TEXT_BEFORE'));?>
+							<?=$cwda->ShowHint(self::GetMessage('HINT_TEXT_BEFORE'));?>
 						</td>
 						<td class="input">
 							<input type="text" name="params[text_before]" value="" size="50" id="wda_input_text_before" />
@@ -214,7 +217,7 @@ class CWDA_CodeGeneration extends CWDA_Plugin {
 						<td class="check"></td>
 						<td class="label">
 							<label for="wda_checkbox_text_after"><?=self::GetMessage('PROP_TEXT_AFTER');?></label>
-							<?=CWDA::ShowHint(self::GetMessage('HINT_TEXT_AFTER'));?>
+							<?=$cwda->ShowHint(self::GetMessage('HINT_TEXT_AFTER'));?>
 						</td>
 						<td class="input">
 							<input type="text" name="params[text_after]" value="" size="50" id="wda_input_text_after" />
@@ -231,6 +234,7 @@ class CWDA_CodeGeneration extends CWDA_Plugin {
 	}
 	static function Process($ElementID, $arElement, $Params) {
 		$bResult = false;
+        $cwda = new CWDA;
 		// Source
 		$SourceField = false;
 		$SourcePropertyID = false;
@@ -245,7 +249,7 @@ class CWDA_CodeGeneration extends CWDA_Plugin {
 			if (strlen($SourceField)) {
 				$Value = $arElement[$SourceField];
 			} elseif ($SourcePropertyID>0) {
-				$arProp = CWDA::GetPropertyFromArrayById($arElement['PROPERTIES'], $SourcePropertyID);
+				$arProp = $cwda->GetPropertyFromArrayById($arElement['PROPERTIES'], $SourcePropertyID);
 				$Value = $arProp['VALUE'];
 				if (is_array($Value) && !empty($Value)) {
 					foreach($Value as $ValueItem) {
@@ -321,8 +325,8 @@ class CWDA_CodeGeneration extends CWDA_Plugin {
 					for($i=0; $i<StrLen($Code); $i++) {
 						$Letter = substr($Code,$i,1);
 						$A_Ya = self::GetMessage('PREG_A_YA_PATTERN');
-						if (!CWDA::IsUtf()) {
-							$A_Ya = CWDA::ConvertCharset($A_Ya);
+						if (!$cwda->IsUtf()) {
+							$A_Ya = $cwda->ConvertCharset($A_Ya);
 						}
 						if (!preg_match('#[A-z0-9'.$A_Ya.'-_]#i'.BX_UTF_PCRE_MODIFIER,$Letter)) {
 							$Letter = $TranslitParams['TRANS_OTHER'];
@@ -344,10 +348,10 @@ class CWDA_CodeGeneration extends CWDA_Plugin {
 			} while ($TranslitParams['UNIQUE']=='Y' && self::CodeExists($Code, $IBlockID, $ElementID));
 			$IBlockElement = new CIBlockElement;
 			if ($IBlockElement->Update($ElementID,array('CODE'=>$Code))) {
-				CWDA::Log('Set code ['.$Code.'] for element #'.$ElementID, self::CODE);
+                $cwda->Log('Set code ['.$Code.'] for element #'.$ElementID, self::CODE);
 				$bResult = true;
 			} else {
-				CWDA::Log('Error set code ['.$Code.'] for element #'.$ElementID.': '.$IBlockElement->LAST_ERROR, self::CODE);
+                $cwda->Log('Error set code ['.$Code.'] for element #'.$ElementID.': '.$IBlockElement->LAST_ERROR, self::CODE);
 			}
 		}
 		return $bResult;

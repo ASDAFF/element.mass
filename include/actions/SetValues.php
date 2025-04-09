@@ -8,8 +8,9 @@ class CWDA_SetValues extends CWDA_Plugin {
 	//
 	static function GetDescription() {
 		$Descr = 'Плагин выполняет массовое заполнение полей. В настоящее время не поддерживаются поля «Картинка для анонса» и «Детальная картинка», а также свойства типа «Файл» и «Видео».';
-		if (!CWDA::IsUtf()) {
-			$Descr = CWDA::ConvertCharset($Descr);
+        $cwda = new CWDA;
+		if (!$cwda->IsUtf()) {
+			$Descr = $cwda->ConvertCharset($Descr);
 		}
 		return $Descr;
 	}
@@ -65,14 +66,16 @@ class CWDA_SetValues extends CWDA_Plugin {
 			'SEO_ELEMENT_PAGE_TITLE' => '[PAGE_TITLE] Заголовок страницы',
 		);
 		$MESS = trim($MESS[$Code]);
-		if ($ConvertCharset && !CWDA::IsUtf()) {
-			$MESS = CWDA::ConvertCharset($MESS);
+        $cwda = new CWDA;
+		if ($ConvertCharset && !$cwda->IsUtf()) {
+			$MESS = $cwda->ConvertCharset($MESS);
 		}
 		return $MESS;
 	}
 	//
 	static function AddHeadData() {
-		$arStores = CWDA::GetStoresList();
+        $cwda = new CWDA;
+		$arStores = $cwda->GetStoresList();
 		$GLOBALS['APPLICATION']->SetAdditionalCss('/bitrix/components/bitrix/main.lookup.input/templates/iblockedit/style.css');
 		$GLOBALS['APPLICATION']->AddHeadScript('/bitrix/components/bitrix/main.lookup.input/script.js');
 		$GLOBALS['APPLICATION']->AddHeadScript('/bitrix/components/bitrix/main.lookup.input/templates/iblockedit/script2.js');
@@ -282,6 +285,7 @@ class CWDA_SetValues extends CWDA_Plugin {
 		return $arResult;
 	}
 	static function ShowAdditionalSettings() {
+        $cwda = new CWDA;
 		$IBlockID = IntVal($_GET['iblock_id']);
 		$Target = htmlspecialcharsbx($_GET['target']);
 		CModule::IncludeModule('iblock');
@@ -333,7 +337,7 @@ class CWDA_SetValues extends CWDA_Plugin {
 					print '<input name="PROP['.$arProperty['CODE'].'][n0]" value="Y" type="checkbox" />';
 					break;
 				case 'L:WDA_MEASURE':
-					$arMeasureList = CWDA::GetMeasureList();
+					$arMeasureList = $cwda->GetMeasureList();
 					print '<select name="PROP['.$arProperty['CODE'].'][n0]">';
 					foreach($arMeasureList as $arMeasure) {
 						print '<option value="'.$arMeasure['ID'].'">'.$arMeasure['MEASURE_TITLE'].'</option>';
@@ -341,7 +345,7 @@ class CWDA_SetValues extends CWDA_Plugin {
 					print '</select>';
 					break;
 				case 'L:WDA_VAT_ID':
-					$arVatList = CWDA::GetVatList();
+					$arVatList = $cwda->GetVatList();
 					print '<select name="PROP['.$arProperty['CODE'].'][n0]">';
 					foreach($arVatList as $arVat) {
 						$strRate = '';
@@ -412,7 +416,7 @@ class CWDA_SetValues extends CWDA_Plugin {
 			}
 			$HTML = ob_get_clean();
 			if ($strFieldType=='PRICE') {
-				$arCurrencies = CWDA::GetCurrencyList();
+				$arCurrencies = $cwda->GetCurrencyList();
 				$strCurrencySelect = '<select name="CURRENCY">';
 				foreach($arCurrencies as $Key => $arCurrency) {
 					$strCurrencySelect .= '<option value="'.$Key.'">'.$Key.'</option>';
@@ -445,8 +449,8 @@ class CWDA_SetValues extends CWDA_Plugin {
 			} elseif (in_array($Target,array('CATALOG_WEIGHT'))) {
 				$HTML = str_replace('<br></td>','&nbsp;&nbsp;'.self::GetMessage('SIZE_UNIT_G',true).'</td>',$HTML);
 			}
-			if (!CWDA::IsUtf()) {
-				$HTML = CWDA::ConvertCharset($HTML,'CP1251','UTF-8');
+			if (!$cwda->IsUtf()) {
+				$HTML = $cwda->ConvertCharset($HTML,'CP1251','UTF-8');
 			}
 			$HTML = trim($HTML);
 			if ($HTML=='') {
@@ -456,11 +460,12 @@ class CWDA_SetValues extends CWDA_Plugin {
 		}
 	}
 	static function ShowSettings($IBlockID=false) {
+        $cwda = new CWDA;
 		?>
 		<div id="wda_settings_<?=self::CODE?>">
 			<div class="wda_settings_header"><?=self::GetMessage('FIELD_TARGET');?></div>
 			<div>
-				<div><select name="params[field_target]" id="wda_field_target" class="wda_select_field" data-callback="wda_field_callback"></select><?=CWDA::ShowHint(self::GetMessage('SELECT_PRICE_TARGET'));?></div>
+				<div><select name="params[field_target]" id="wda_field_target" class="wda_select_field" data-callback="wda_field_callback"></select><?=$cwda->ShowHint(self::GetMessage('SELECT_PRICE_TARGET'));?></div>
 			</div>
 			<br/>
 			<div class="wda_settings_header"><?=self::GetMessage('FIELD_VALUE');?></div>
@@ -494,21 +499,21 @@ class CWDA_SetValues extends CWDA_Plugin {
 	}
 	static function ReplaceCounter($Subject, $Params) {
 		self::InitCounter($Params);
-		$Storage = defined('WDA_CRON') && WDA_CRON===true ? $Storage = &$GLOBALS : $Storage = &$_SESSION;
+		$Storage = defined('WDA_CRON') && WDA_CRON===true ? $Storage = $GLOBALS : $Storage = &$_SESSION;
 		$Search = $Params['counter_search'];
 		$CounterValue = $Storage['WDA_CUSTOM_'.self::CODE][self::COUNTER_KEY];
 		$Subject = str_replace($Search,$CounterValue,$Subject);
 		return $Subject;
 	}
 	static function InitCounter($Params){
-		$Storage = defined('WDA_CRON') && WDA_CRON===true ? $Storage = &$GLOBALS : $Storage = &$_SESSION;
+		$Storage = defined('WDA_CRON') && WDA_CRON===true ? $Storage = $GLOBALS : $Storage = &$_SESSION;
 		$First = FloatVal($Params['counter_first']);
 		if(!isset($Storage['WDA_CUSTOM_'.self::CODE][self::COUNTER_KEY])) {
 			$Storage['WDA_CUSTOM_'.self::CODE][self::COUNTER_KEY] = $First;
 		}
 	}
 	static function IncCounter($Params){
-		$Storage = defined('WDA_CRON') && WDA_CRON===true ? $Storage = &$GLOBALS : $Storage = &$_SESSION;
+		$Storage = defined('WDA_CRON') && WDA_CRON===true ? $Storage = $GLOBALS : $Storage = &$_SESSION;
 		$Step = FloatVal($Params['counter_step']);
 		$CounterValue = FloatVal($Storage['WDA_CUSTOM_'.self::CODE][self::COUNTER_KEY]);
 		$CounterValue += $Step;
@@ -522,6 +527,7 @@ class CWDA_SetValues extends CWDA_Plugin {
 	}
 	static function Process($ElementID, $arElement, $Params) {
 		$bResult = false;
+        $cwda = new CWDA;
 		$bCatalogModule = CModule::IncludeModule('catalog');
 		$Target = $Params['field_target'];
 		$ValueArray = $Params['PROP'][$Target]; // Для свойств - далее будет переопределение
@@ -556,8 +562,8 @@ class CWDA_SetValues extends CWDA_Plugin {
 				} elseif (in_array($Target,array('CREATED_BY','MODIFIED_BY'))) {
 					$Value = $Value['VALUE'];
 				}
-				if (!CWDA::IsUtf()) {
-					$Value = CWDA::ConvertCharset($Value);
+				if (!$cwda->IsUtf()) {
+					$Value = $cwda->ConvertCharset($Value);
 				}
 				if(in_array($Target,array('NAME','CODE','EXTERNAL_ID'))){
 					if($Params['use_counter']=='Y') {
@@ -569,14 +575,14 @@ class CWDA_SetValues extends CWDA_Plugin {
 				}
 				$arFields[$Target] = $Value;
 				if ($IBlockElement->Update($ElementID,$arFields)) {
-					CWDA::Log('Updated element #'.$ElementID.', fields: '.print_r($arFields,1));
+                    $cwda->Log('Updated element #'.$ElementID.', fields: '.print_r($arFields,1));
 					$bResult = true;
 				} else {
-					CWDA::Log('Error update element #'.$ElementID.', ['.$IBlockElement->LAST_ERROR.'] fields: '.print_r($arFields,1));
+                    $cwda->Log('Error update element #'.$ElementID.', ['.$IBlockElement->LAST_ERROR.'] fields: '.print_r($arFields,1));
 				}
 			} elseif (preg_match('#^CATALOG_PRICE_(\d+)$#',$Target,$M)) {
 				$PriceID = $M[1];
-				$arCurrencies = CWDA::GetCurrencyList();
+				$arCurrencies = $cwda->GetCurrencyList();
 				$Currency = htmlspecialchars($Params['CURRENCY']);
 				if (strlen($Currency) && isset($arCurrencies[$Currency])) {
 					$Price = $ValueSingle;
@@ -589,14 +595,14 @@ class CWDA_SetValues extends CWDA_Plugin {
 					if(is_array($GLOBALS['WDI_BASE_PRICE']) && $GLOBALS['WDI_BASE_PRICE']['ID']!=$PriceID) {
 						$ExtraID = $Params['EXTRA_ID'];
 					}
-					if (CWDA::SetProductPrice($ElementID, $PriceID, $Price, $Currency, $ExtraID)) {
+					if ($cwda->SetProductPrice($ElementID, $PriceID, $Price, $Currency, $ExtraID)) {
 						$bResult = true;
 					}
 				}
 			} elseif (preg_match('#^PROPERTY_(\d+)$#',$Target,$M)) {
 				$PropertyID = $M[1];
 				$Value = $Params['PROP'][$PropertyID];
-				$arProp = CWDA::GetPropertyFromArrayById($arElement['PROPERTIES'],$PropertyID);
+				$arProp = $cwda->GetPropertyFromArrayById($arElement['PROPERTIES'],$PropertyID);
 				switch($arProp['PROPERTY_TYPE']) {
 					case 'S':
 						switch($arProp['USER_TYPE']) {
@@ -623,14 +629,14 @@ class CWDA_SetValues extends CWDA_Plugin {
 						}
 						break;
 				}
-				#CWDA::Log('Save property '.$PropertyID.', value: '.print_r($Value,1));
-				if (!CWDA::IsUtf()) {
+				#$cwda->Log('Save property '.$PropertyID.', value: '.print_r($Value,1));
+				if (!$cwda->IsUtf()) {
 					if (is_array($Value)) {
 						foreach($Value as $Key => $Item) {
-							$Value[$Key] = CWDA::ConvertCharset($Item);
+							$Value[$Key] = $cwda->ConvertCharset($Item);
 						}
 					} else {
-						$Value = CWDA::ConvertCharset($Value);
+						$Value = $cwda->ConvertCharset($Value);
 					}
 				}
 				if(in_array($arProp['PROPERTY_TYPE'],array('S','N'))){
@@ -658,7 +664,7 @@ class CWDA_SetValues extends CWDA_Plugin {
 			} elseif (preg_match('#^CATALOG_([\w\d_]+)$#',$Target,$M)) {
 				if ($bCatalogModule) {
 					$Value = $ValueSingle;
-					$arCurrencies = CWDA::GetCurrencyList();
+					$arCurrencies = $cwda->GetCurrencyList();
 					$Currency = htmlspecialchars($Params['CURRENCY']);
 					if (in_array($Target,array('CATALOG_QUANTITY','CATALOG_PURCHASING_PRICE','CATALOG_QUANTITY_RESERVED','CATALOG_QUANTITY_TRACE','CATALOG_CAN_BUY_ZERO','CATALOG_SUBSCRIBE','CATALOG_VAT_INCLUDED','CATALOG_VAT_ID','CATALOG_WIDTH','CATALOG_LENGTH','CATALOG_HEIGHT','CATALOG_WEIGHT','CATALOG_MEASURE'))) {
 						$arFields = array(
@@ -708,10 +714,10 @@ class CWDA_SetValues extends CWDA_Plugin {
 								break;
 						}
 						if (CCatalogProduct::Add($arFields)) {
-							CWDA::Log('Set '.$Target.'='.$Value.' for element#'.$ElementID);
+                            $cwda->Log('Set '.$Target.'='.$Value.' for element#'.$ElementID);
 							$bResult = true;
 						} else {
-							CWDA::Log('Error update '.$Target.' for element #'.$ElementID.', fields: '.print_r($arFields,1));
+                            $cwda->Log('Error update '.$Target.' for element #'.$ElementID.', fields: '.print_r($arFields,1));
 						}
 					} elseif ($Target=='CATALOG_MEASURE_RATIO') {
 						$resRatio = CCatalogMeasureRatio::GetList(array(),array('PRODUCT_ID'=>$ElementID));
@@ -728,7 +734,7 @@ class CWDA_SetValues extends CWDA_Plugin {
 						if ($bCatalogModule && class_exists('CCatalogStore')) {
 							$Value = $ValueSingle;
 							$StoreID = $M[1];
-							if (CWDA::SetProductStoreQuantity($ElementID, $StoreID, $Value)) {
+							if ($cwda->SetProductStoreQuantity($ElementID, $StoreID, $Value)) {
 								$bResult = true;
 							}
 						}
@@ -736,8 +742,8 @@ class CWDA_SetValues extends CWDA_Plugin {
 				}
 			} elseif (preg_match('#^SEO_([\w\d_]+)$#',$Target,$M)) {
 				$Value = $ValueSingle;
-				if (!CWDA::IsUtf()) {
-					$Value = CWDA::ConvertCharset($Value);
+				if (!$cwda->IsUtf()) {
+					$Value = $cwda->ConvertCharset($Value);
 				}
 				$arFields = array(
 					'IPROPERTY_TEMPLATES' => array(
@@ -745,10 +751,10 @@ class CWDA_SetValues extends CWDA_Plugin {
 					),
 				);
 				if ($IBlockElement->Update($ElementID,$arFields)) {
-					CWDA::Log('Updated element #'.$ElementID.', fields: '.print_r($arFields,1));
+                    $cwda->Log('Updated element #'.$ElementID.', fields: '.print_r($arFields,1));
 					$bResult = true;
 				} else {
-					CWDA::Log('Error update element #'.$ElementID.', ['.$IBlockElement->LAST_ERROR.'] fields: '.print_r($arFields,1));
+                    $cwda->Log('Error update element #'.$ElementID.', ['.$IBlockElement->LAST_ERROR.'] fields: '.print_r($arFields,1));
 				}
 			}
 		}
