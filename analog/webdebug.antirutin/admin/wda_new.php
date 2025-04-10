@@ -736,8 +736,6 @@ if($arProfile){
 			value="<?=Helper::getMessage('WDA_BUTTON_STOP');?>" disabled="disabled"
 			data-disabling-control-reverse="true" />
 		<div class="wda-progress-bar" data-role="execute-progress-bar"></div>
-		<img src="https://www.webdebug.ru/_res/<?=$strModuleId;?>/<?=$strModuleId;?>.img" alt="" 
-			width="0" height="0" style="visibility:hidden"/>
 	<?endif?>
 <?$obTabControl->end();?>
 
