@@ -1,0 +1,7 @@
+.plugin-form__field[data-role="offer_generator_modes_div"] {
+	border-left:3px solid #ddd;
+	padding:10px 15px;
+}
+.plugin-form__field[data-role="offer_generator_modes_div"] > div {
+	display:none;
+}

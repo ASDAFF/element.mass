@@ -1,0 +1,6 @@
+<?
+$MESS['WDA_FILTER_POPUP_TYPE_MAIN'] = 'Товары';
+$MESS['WDA_FILTER_POPUP_TYPE_OFFERS'] = 'Предложения';
+$MESS['WDA_FILTER_POPUP_FIELD_TEXT_PLACEHOLDER'] = 'Поиск по списку';
+$MESS['WDA_FILTER_POPUP_FIELD_NOT_FOUND'] = 'Ничего не найдено';
+?>

@@ -1,0 +1,9 @@
+div[data-plugin-form="REPLACE_TEXT"] textarea {
+	max-width:100%;
+	max-height:100px;
+	min-height:60px;
+	resize:vertical;
+}
+div[data-plugin-form="REPLACE_TEXT"] input[data-role="reg_exp_search"] {
+	font-family:"Courier New", "Courier", monospace;
+}

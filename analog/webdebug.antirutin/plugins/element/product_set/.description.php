@@ -1,0 +1,2 @@
+<p>Плагин позволяет собирать наборы и комплекты.</p>
+<p><a href="https://dev.1c-bitrix.ru/community/blogs/product_features/types-of-goods-create-sets-and-kits-1cbitrix-site-management.php" target="_blank">Подробнее о наборах и комплектах</a></p>

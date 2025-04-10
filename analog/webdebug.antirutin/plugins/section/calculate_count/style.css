@@ -1,0 +1,6 @@
+div[data-plugin-form="CALCULATE_COUNT"] textarea[data-role="additional_filter_php"] {
+	font:normal 14px/16px "Courier New", "Courier", monospace;
+	max-height:500px;
+	min-height:50px;
+	resize:vertical;
+}

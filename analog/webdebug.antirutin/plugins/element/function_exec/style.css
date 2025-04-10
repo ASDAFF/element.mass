@@ -1,0 +1,24 @@
+div[data-plugin-form="FUNCTION_EXEC"] div[data-role="function_arguments"] {
+	padding:10px 0 10px 50px;
+}
+div[data-plugin-form="FUNCTION_EXEC"] div[data-role="function_arguments"] > div {
+	margin-bottom:6px;
+}
+div[data-plugin-form="FUNCTION_EXEC"] div[data-role="function_arguments"] > div:last-child {
+	margin-bottom:0;
+}
+div[data-plugin-form="FUNCTION_EXEC"] div[data-role="function_arguments"] > div > div {
+	margin-bottom:2px;
+}
+div[data-plugin-form="FUNCTION_EXEC"] div[data-role="function_arguments"] > div > input[type="text"] {
+	font-family:"Courier New", "Courier", monospace;
+}
+div[data-plugin-form="FUNCTION_EXEC"] div[data-role="function_arguments"] > div > div:after {
+	content:' :';
+}
+div[data-plugin-form="FUNCTION_EXEC"] div[data-role="function_arguments"] > div.function_argument_required > div {
+	font-weight:bold;
+}
+div[data-plugin-form="FUNCTION_EXEC"] div[data-role="function_arguments"] > div.function_argument_required > div:after {
+	content:' * :';
+}

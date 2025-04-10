@@ -1,0 +1,9 @@
+div[data-plugin-form="PATTERN_FILL"] textarea {
+	max-width:100%;
+	max-height:1000px;
+	min-height:60px;
+	resize:vertical;
+}
+div[data-plugin-form="PATTERN_FILL"] div[data-role="macro_wrapper"] {
+	margin-bottom:6px;
+}

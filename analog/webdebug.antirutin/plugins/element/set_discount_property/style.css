@@ -1,0 +1,7 @@
+div[data-plugin-form="SET_DISCOUNT_PROPERTY"] div[data-role="select_value"] {
+	display:inline-block;
+	min-width:400px;
+}
+div[data-plugin-form="SET_DISCOUNT_PROPERTY"] div[data-role="select_value"] select[data-role="value"] {
+	width:100%;
+}

@@ -1,0 +1,40 @@
+div[data-plugin-form="SET_VALUES"] [data-role="field_input_inner"] textarea {
+	min-height:60px;
+	min-width:300px;
+}
+div[data-plugin-form="SET_VALUES"] [data-role="field_input_inner"] > * {
+	vertical-align:top;
+}
+div[data-plugin-form="SET_VALUES"] div[data-role="field_list"] table[data-role="field_items"]{
+	border:0;
+	border-collapse:collapse;
+	max-width:100%;
+	table-layout:fixed;
+}
+div[data-plugin-form="SET_VALUES"] div[data-role="field_list"] table[data-role="field_items"] td{
+	padding:0 4px 4px 0;
+}
+div[data-plugin-form="SET_VALUES"] div[data-role="field_list"] div[data-role="field_select_wrapper"] {
+	display:inline-block;
+	position:relative;
+}
+div[data-plugin-form="SET_VALUES"] div[data-role="field_list"] td[data-role="field_delete"] input[type=button]{
+	font-size:15px;
+	height:25px;
+	margin-bottom:0;
+	margin-top:0;
+}
+div[data-plugin-form="SET_VALUES"] div[data-role="field_list"] tr[data-role="field_item"]:first-child td[data-role="field_delete"] {
+	width:25px;
+}
+div[data-plugin-form="SET_VALUES"] div[data-role="field_list"] tr[data-role="field_item"]:first-child td[data-role="field_delete"] input[type=button]{
+	display:none;
+}
+div[data-plugin-form="SET_VALUES"] textarea[data-role="php_code"] {
+	font-family:"Courier New", "Courier", monospace;
+	max-height:1000px;
+	min-height:200px;
+	resize:vertical;
+	width:100%;
+}
+

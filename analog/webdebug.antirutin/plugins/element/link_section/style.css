@@ -1,0 +1,13 @@
+div[data-plugin-form="LINK_SECTION"] div[data-role="select_section"] {
+	display:inline-block;
+	min-width:400px;
+}
+div[data-plugin-form="LINK_SECTION"] div[data-role="filter_wrapper"] {
+	margin-bottom:4px;
+}
+div[data-plugin-form="LINK_SECTION"] input[data-role="filter"] {
+	width:100%;
+}
+div[data-plugin-form="LINK_SECTION"] select[data-role="section"] {
+	width:100%;
+}

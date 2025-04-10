@@ -1,0 +1,7 @@
+div[data-plugin-form="DELETE_LIST_VALUES"] div[data-role="select_value"] {
+	display:inline-block;
+	min-width:400px;
+}
+div[data-plugin-form="DELETE_LIST_VALUES"] div[data-role="select_value"] select[data-role="value"] {
+	width:100%;
+}

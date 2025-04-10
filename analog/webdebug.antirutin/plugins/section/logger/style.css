@@ -1,0 +1,45 @@
+div[data-plugin-form="LOGGER"] input[data-role="filename"] {
+	font-family:"Courier New", "Courier", monospace;
+	max-width:100%;
+}
+div[data-plugin-form="LOGGER"] input[data-role="fields_move_right"] {
+	font-family:"Courier New", "Courier", monospace;
+}
+div[data-plugin-form="LOGGER"] table[data-role="fields"] {
+	width:100%;
+}
+div[data-plugin-form="LOGGER"] table[data-role="fields"] {
+	padding:0;
+	vertical-align:top;
+}
+div[data-plugin-form="LOGGER"] div[data-role="fields_header"] {
+	font-weight:bold;
+	margin-bottom:6px;
+}
+div[data-plugin-form="LOGGER"] div[data-role="fields_filter"] {
+	margin-bottom:2px;
+}
+div[data-plugin-form="LOGGER"] div[data-role="fields_filter"] input[type="text"] {
+	width:100%;
+}
+div[data-plugin-form="LOGGER"] table[data-role="fields"] td[data-role="fields_column_all"] {
+	width:50%;
+}
+div[data-plugin-form="LOGGER"] table[data-role="fields"] td[data-role="fields_column_middle"] {
+	padding:0 8px;
+}
+div[data-plugin-form="LOGGER"] table[data-role="fields"] td[data-role="fields_column_selected"] {
+	width:50%;
+}
+div[data-plugin-form="LOGGER"] table[data-role="fields"] td[data-role="fields_column_controls"] {
+	padding:0 8px;
+}
+div[data-plugin-form="LOGGER"] table[data-role="fields"] td[data-role="fields_column_all"] select,
+div[data-plugin-form="LOGGER"] table[data-role="fields"] td[data-role="fields_column_selected"] select {
+	height:220px;
+	width:100%;
+}
+div[data-plugin-form="LOGGER"] table[data-role="fields"] td[data-role="fields_column_middle"] input,
+div[data-plugin-form="LOGGER"] table[data-role="fields"] td[data-role="fields_column_controls"] input {
+	width:100%;
+}
